@@ -1,0 +1,33 @@
+package services
+
+import (
+	"fmt"
+	"tennis-coach-ai/internal/models"
+)
+
+func BuildPrompt(req models.AnalyzeRequest) string {
+	base := `You are an expert tennis coach.
+
+Return ONLY JSON:
+{
+  "issues": [],
+  "recommendations": [],
+  "focus_area": ""
+}
+`
+
+	if req.Type == "match_stats" {
+		return base + fmt.Sprintf(`
+Input stats:
+First serve: %d
+Second serve won: %d
+Unforced errors: %d
+`,
+			req.Stats.FirstServePct,
+			req.Stats.SecondServeWonPct,
+			req.Stats.UnforcedErrors,
+		)
+	}
+
+	return base + "\nInput:\n" + req.Text
+}
