@@ -11,12 +11,16 @@ type Config struct {
 	App struct {
 		Env  string `mapstructure:"env"`
 		Name string `mapstructure:"name"`
-	}
+	} `mapstructure:"app"`
 
 	HTTP struct {
 		Host string `mapstructure:"host"`
 		Port uint64 `mapstructure:"port"`
 	} `mapstructure:"http"`
+
+	OpenAI struct {
+		Key string `mapstructure:"key"`
+	} `mapstructure:"openai"`
 }
 
 func Load(cfgFile string) *Config {

@@ -8,11 +8,11 @@ import (
 )
 
 type AnalyzeHandler struct {
-	service services.AnalysisService
+	service *services.AnalysisService
 }
 
-func NewAnalyzeHandler() *AnalyzeHandler {
-	return &AnalyzeHandler{}
+func NewAnalyzeHandler(service *services.AnalysisService) *AnalyzeHandler {
+	return &AnalyzeHandler{service}
 }
 
 func (h *AnalyzeHandler) Analyze(w http.ResponseWriter, r *http.Request) {

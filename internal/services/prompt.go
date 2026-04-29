@@ -5,7 +5,7 @@ import (
 	"tennis-coach-ai/internal/models"
 )
 
-func BuildPrompt(req models.AnalyzeRequest) string {
+func buildPrompt(req models.AnalyzeRequest) string {
 	base := `You are an expert tennis coach.
 
 Return ONLY JSON:
@@ -14,6 +14,11 @@ Return ONLY JSON:
   "recommendations": [],
   "focus_area": ""
 }
+
+You must return ONLY valid JSON.
+No markdown.
+No explanations.
+No extra text.
 `
 
 	if req.Type == "match_stats" {

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	config "tennis-coach-ai/cfg"
 	"tennis-coach-ai/internal/handlers"
+	"tennis-coach-ai/internal/llm"
+	"tennis-coach-ai/internal/services"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -27,7 +29,9 @@ func NewServer(cfg *config.Config) *Server {
 	healhHandler := handlers.NewHealthHandler()
 	registerHealthRoutes(r, healhHandler)
 
-	analyzeHandler := handlers.NewAnalyzeHandler()
+	llmClient := llm.NewClient(cfg.OpenAI.Key)
+	analysisService := services.NewAnalysisService(llmClient)
+	analyzeHandler := handlers.NewAnalyzeHandler(analysisService)
 	register(r, analyzeHandler)
 
 	s.HTTP = &http.Server{
