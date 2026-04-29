@@ -1,11 +1,18 @@
 info:
-  name: Analyze
+  name: Analyze - Text
   type: http
   seq: 1
 
 http:
   method: POST
   url: http://localhost:8080/analyze
+  body:
+    type: json
+    data: |-
+      {
+        "type": "text",
+        "text": "I struggle with long rallies and lose focus"
+      }
   auth: inherit
 
 settings:
