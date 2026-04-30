@@ -29,7 +29,7 @@ func NewServer(cfg *config.Config) *Server {
 	healhHandler := handlers.NewHealthHandler()
 	registerHealthRoutes(r, healhHandler)
 
-	llmClient := llm.NewClient(cfg.OpenAI.Key)
+	llmClient := llm.NewProvider(llm.Provider(cfg.LLM.Prodiver), cfg.OpenAI.Key)
 	analysisService := services.NewAnalysisService(llmClient)
 	analyzeHandler := handlers.NewAnalyzeHandler(analysisService)
 	register(r, analyzeHandler)

@@ -9,10 +9,10 @@ import (
 )
 
 type AnalysisService struct {
-	llm *llm.Client
+	llm llm.Client
 }
 
-func NewAnalysisService(llm *llm.Client) *AnalysisService {
+func NewAnalysisService(llm llm.Client) *AnalysisService {
 	return &AnalysisService{llm}
 }
 
@@ -35,7 +35,7 @@ func (s *AnalysisService) Analyze(ctx context.Context, req models.AnalyzeRequest
 		return fallbackResponse(), nil
 	}
 
-	if validate(resp) {
+	if !validate(resp) {
 		return fallbackResponse(), nil
 	}
 

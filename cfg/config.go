@@ -21,6 +21,10 @@ type Config struct {
 	OpenAI struct {
 		Key string `mapstructure:"key"`
 	} `mapstructure:"openai"`
+
+	LLM struct {
+		Prodiver string `mapstructure:"prodiver"`
+	} `mapstructure:"llm"`
 }
 
 func Load(cfgFile string) *Config {
