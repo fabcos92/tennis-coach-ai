@@ -19,6 +19,8 @@ You must return ONLY valid JSON.
 No markdown.
 No explanations.
 No extra text.
+Issues must describe concrete weaknesses, not just symptoms.
+Each field must be filled.
 `
 
 	if req.Type == "match_stats" {

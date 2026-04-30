@@ -22,6 +22,10 @@ type Config struct {
 		Key string `mapstructure:"key"`
 	} `mapstructure:"openai"`
 
+	Groq struct {
+		Key string `mapstructure:"key"`
+	} `mapstructure:"groq"`
+
 	LLM struct {
 		Prodiver string `mapstructure:"prodiver"`
 	} `mapstructure:"llm"`

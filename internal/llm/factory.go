@@ -5,13 +5,17 @@ type Provider string
 const (
 	ProviderMock   Provider = "mock"
 	ProviderOpenAI Provider = "openai"
+	ProviderGroq   Provider = "groq"
 )
 
-func NewProvider(provider Provider, apiKey string) Client {
+func NewProvider(provider Provider, openAIApiKey, groqAPIKey string) Client {
 	switch provider {
 
 	case ProviderOpenAI:
-		return NewOpenAIClient(apiKey)
+		return NewOpenAIClient(openAIApiKey)
+
+	case ProviderGroq:
+		return NewGroqClient(groqAPIKey)
 
 	case ProviderMock:
 		fallthrough
