@@ -46,7 +46,7 @@ func runHTTP(cfg *config.Config) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	log.Printf("starting HTTP server on %s:%d (env=%s)\n", cfg.HTTP.Host, cfg.HTTP.Port, cfg.App.Env)
+	log.Printf("[SERVER] starting on %s:%d (env=%s)", cfg.HTTP.Host, cfg.HTTP.Port, cfg.App.Env)
 
 	go func() {
 		if err := server.Start(); err != nil {
@@ -56,7 +56,7 @@ func runHTTP(cfg *config.Config) error {
 
 	<-ctx.Done()
 
-	log.Println("shutdown signal received")
+	log.Println("[SERVER] shutdown signal received")
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

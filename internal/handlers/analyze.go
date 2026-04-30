@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	models "tennis-coach-ai/internal/models"
 	"tennis-coach-ai/internal/services"
@@ -16,23 +17,29 @@ func NewAnalyzeHandler(service *services.AnalysisService) *AnalyzeHandler {
 }
 
 func (h *AnalyzeHandler) Analyze(w http.ResponseWriter, r *http.Request) {
+	log.Printf("[ANALYZE] request started")
+
 	var req models.AnalyzeRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request", http.StatusBadRequest)
+		log.Printf("[ANALYZE] invalid request body: %v", err)
+		writeError(w, http.StatusBadRequest, "INVALID_REQUEST", "invalid request body")
 		return
 	}
 
 	if req.Type == "" {
-		http.Error(w, "missing type", http.StatusBadRequest)
+		log.Printf("[ANALYZE] validation error: missing type")
+		writeError(w, http.StatusBadRequest, "VALIDATION_ERROR", "missing type")
 		return
 	}
 
 	resp, err := h.service.Analyze(r.Context(), req)
 	if err != nil {
-		http.Error(w, "internal error", http.StatusInternalServerError)
+		log.Printf("[ANALYZE] service error: %v", err)
+		writeError(w, http.StatusInternalServerError, "SERVICE_ERROR", "internal error")
 		return
 	}
 
+	log.Printf("[ANALYZE] request completed successfully")
 	writeJSON(w, http.StatusOK, resp)
 }

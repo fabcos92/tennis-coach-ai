@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 )
@@ -19,7 +20,7 @@ func NewGroqClient(apiKey string) Client {
 		apiKey:  apiKey,
 		baseURL: "https://api.groq.com/openai/v1/chat/completions",
 		httpClient: &http.Client{
-			Timeout: 5 * time.Second,
+			Timeout: 10 * time.Second,
 		},
 	}
 }
@@ -31,6 +32,12 @@ func (c *GroqClient) Analyze(ctx context.Context, prompt string) (string, error)
 }
 
 func (c *GroqClient) callLLM(ctx context.Context, prompt string) (string, error) {
+	log.Printf("[LLM] calling provider (model=%s)", "llama-3.1-8b-instant")
+	start := time.Now()
+	defer func() {
+		log.Printf("[LLM] request finished in %s", time.Since(start))
+	}()
+
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -51,7 +58,12 @@ func (c *GroqClient) callLLM(ctx context.Context, prompt string) (string, error)
 
 	bodyBytes, err := json.Marshal(reqBody)
 	if err != nil {
-		return "", err
+		log.Printf("[LLM] request failed: %v", err)
+		return "", LLMError{
+			Provider:  "groq",
+			Message:   string(err.Error()),
+			Retryable: false,
+		}
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -61,20 +73,22 @@ func (c *GroqClient) callLLM(ctx context.Context, prompt string) (string, error)
 		bytes.NewBuffer(bodyBytes),
 	)
 	if err != nil {
-		return "", err
+		log.Printf("[LLM] request failed: %v", err)
+		return "", LLMError{
+			Provider:  "groq",
+			Message:   string(err.Error()),
+			Retryable: false,
+		}
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := c.httpClient.Do(req)
+	resp, err := doRequest(ctx, c.httpClient, req, "groq")
 	if err != nil {
+		log.Printf("[LLM] request failed: %v", err)
 		return "", err
 	}
-	defer resp.Body.Close()
-
-	var llmResp response
-	json.NewDecoder(resp.Body).Decode(&llmResp)
-
-	return llmResp.Choices[0].Message.Content, nil
+	log.Printf("[LLM] response received successfully")
+	return resp.Choices[0].Message.Content, nil
 }

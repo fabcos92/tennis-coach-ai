@@ -27,7 +27,7 @@ type Config struct {
 	} `mapstructure:"groq"`
 
 	LLM struct {
-		Prodiver string `mapstructure:"prodiver"`
+		Provider string `mapstructure:"provider"`
 	} `mapstructure:"llm"`
 }
 

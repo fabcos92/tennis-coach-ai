@@ -20,3 +20,13 @@ func writeJSON(w http.ResponseWriter, status int, data any) {
 		http.Error(w, `{"error":"failed to encode response"}`, http.StatusInternalServerError)
 	}
 }
+
+func writeError(w http.ResponseWriter, status int, code string, msg string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	_ = json.NewEncoder(w).Encode(APIError{
+		Code:    code,
+		Message: msg,
+	})
+}
