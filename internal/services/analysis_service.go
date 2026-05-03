@@ -49,7 +49,7 @@ func parseAndValidateLLMResponse(raw string) (*models.AnalyzeResponse, error) {
 	}
 
 	if resp.Issues == nil {
-		resp.Issues = []string{}
+		resp.Issues = []models.Issue{}
 	}
 
 	if resp.Recommendations == nil {
@@ -61,7 +61,7 @@ func parseAndValidateLLMResponse(raw string) (*models.AnalyzeResponse, error) {
 
 func validateAgainstInput(req models.AnalyzeRequest, resp *models.AnalyzeResponse) error {
 	for _, issue := range resp.Issues {
-		lower := strings.ToLower(issue)
+		lower := strings.ToLower(issue.Text)
 
 		if strings.Contains(lower, "unforced error") {
 			if req.Stats.UnforcedErrors <= 3 && strings.Contains(lower, "high") {
@@ -75,9 +75,10 @@ func validateAgainstInput(req models.AnalyzeRequest, resp *models.AnalyzeRespons
 
 func fallbackResponse() *models.AnalyzeResponse {
 	return &models.AnalyzeResponse{
-		Issues: []string{
-			"Unable to analyze data reliably",
-		},
+		Issues: []models.Issue{{
+			Text:     "Unable to analyze data reliably",
+			Severity: "low",
+		}},
 		Recommendations: []string{
 			"Try again with clearer input",
 		},

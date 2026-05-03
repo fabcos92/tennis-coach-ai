@@ -26,14 +26,25 @@ Do NOT invent issues.
 Recommend specific exercises or drills if possible.
 
 Output must be valid JSON only.
+
+Return issues as structured objects.
+
+Each issue must include:
+text (string)
+severity (one of: low, medium, high)
+
+Severity rules:
+high: directly impacts performance or consistency
+medium: noticeable but not critical
+low: minor inefficiencies or observations
+
 Return ONLY JSON:
 {
-  "issues": ["","",...],
+  "issues": [{"",""}, {"",""}],
   "recommendations": ["","",...],
   "focus_area": ""
 }
 
-You must return ONLY valid JSON.
 No markdown.
 No explanations.
 No extra text.
@@ -64,9 +75,20 @@ If no clear issues are present, return an empty "issues" array.
 Recommend specific exercises or drills if possible.
 
 Output must be valid JSON only.
+Return issues as structured objects.
+
+Each issue must include:
+text (string)
+severity (one of: low, medium, high)
+
+Severity rules:
+high: directly impacts performance or consistency
+medium: noticeable but not critical
+low: minor inefficiencies or observations
+
 Return ONLY JSON:
 {
-  "issues": ["","",...],
+  "issues": [{"",""}, {"",""}],
   "recommendations": ["","",...],
   "focus_area": ""
 }
