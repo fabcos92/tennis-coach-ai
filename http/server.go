@@ -26,6 +26,10 @@ func NewServer(cfg *config.Config) *Server {
 		Router: r,
 	}
 
+	r.Use(
+		CORSMiddleware([]string{"http://localhost:5173"}),
+	)
+
 	healhHandler := handlers.NewHealthHandler()
 	registerHealthRoutes(r, healhHandler)
 

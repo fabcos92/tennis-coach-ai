@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"tennis-coach-ai/internal/llm"
 	"tennis-coach-ai/internal/models"
@@ -24,33 +25,52 @@ func (s *AnalysisService) Analyze(ctx context.Context, req models.AnalyzeRequest
 		return nil, err
 	}
 
-	clean := extractJSON(raw)
-	if clean == "" {
-		return fallbackResponse(), nil
-	}
-
-	var resp models.AnalyzeResponse
-	err = json.Unmarshal([]byte(clean), &resp)
+	resp, err := parseAndValidateLLMResponse(raw)
 	if err != nil {
 		return fallbackResponse(), nil
 	}
 
-	if !validate(resp) {
+	if err := validateAgainstInput(req, resp); err != nil {
 		return fallbackResponse(), nil
 	}
 
-	return &resp, nil
+	return resp, nil
 }
 
-func extractJSON(raw string) string {
-	start := strings.Index(raw, "{")
-	end := strings.LastIndex(raw, "}")
+func parseAndValidateLLMResponse(raw string) (*models.AnalyzeResponse, error) {
+	var resp *models.AnalyzeResponse
 
-	if start == -1 || end == -1 || end <= start {
-		return ""
+	if err := json.Unmarshal([]byte(raw), &resp); err != nil {
+		return &models.AnalyzeResponse{}, fmt.Errorf("invalid JSON: %w", err)
 	}
 
-	return raw[start : end+1]
+	if resp.FocusArea == "" {
+		return &models.AnalyzeResponse{}, fmt.Errorf("missing focus_area")
+	}
+
+	if resp.Issues == nil {
+		resp.Issues = []string{}
+	}
+
+	if resp.Recommendations == nil {
+		resp.Recommendations = []string{}
+	}
+
+	return resp, nil
+}
+
+func validateAgainstInput(req models.AnalyzeRequest, resp *models.AnalyzeResponse) error {
+	for _, issue := range resp.Issues {
+		lower := strings.ToLower(issue)
+
+		if strings.Contains(lower, "unforced error") {
+			if req.Stats.UnforcedErrors <= 3 && strings.Contains(lower, "high") {
+				return fmt.Errorf("invalid issue: exaggeration detected")
+			}
+		}
+	}
+
+	return nil
 }
 
 func fallbackResponse() *models.AnalyzeResponse {
@@ -63,8 +83,4 @@ func fallbackResponse() *models.AnalyzeResponse {
 		},
 		FocusArea: "unknown",
 	}
-}
-
-func validate(resp models.AnalyzeResponse) bool {
-	return len(resp.Issues) > 0 && len(resp.Recommendations) > 0
 }

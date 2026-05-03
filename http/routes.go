@@ -12,5 +12,5 @@ func registerHealthRoutes(r *mux.Router, healthHandler *handlers.HealthHandler) 
 }
 
 func register(r *mux.Router, userHandler *handlers.AnalyzeHandler) {
-	r.HandleFunc("/analyze", userHandler.Analyze).Methods(http.MethodPost)
+	r.HandleFunc("/analyze", userHandler.Analyze).Methods(http.MethodPost, http.MethodOptions)
 }
