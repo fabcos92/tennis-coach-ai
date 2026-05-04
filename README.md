@@ -1,37 +1,36 @@
 # 🎾 Tennis Coach AI — Tennis Performance Analyzer (LLM-powered API)
 
-A backend system demonstrating practical LLM integration with structured output and reliability patterns.
+A backend system demonstrating practical LLM integration with clean architecture and production-oriented design.
 
 ---
 
 ## 🚀 Project Goal
 
-The goal of this project is to demonstrate:
-- backend system design
-- integration with LLM APIs
-- handling of unreliable external dependencies
-- clean and modular architecture
+This project showcases:
+- designing a backend service around an unreliable external dependency (LLM)
+- clean separation of concerns (domain / application / infrastructure)
+- structured output generation from unstructured input
+- pragmatic system design (no overengineering)
 
 ---
 
 ## ✨ Features
 
 - Tennis performance analysis from:
-  - match descriptions (text input)
-  - structured stats (JSON input)
+  - structured match stats (JSON)
+  - free-form match descriptions (text)
 - Structured LLM output:
-  - issues
-  - recommendations
+  - issues (with severity)
+  - actionable recommendations
   - focus area
 - Pluggable LLM providers:
   - mock (local development)
   - Groq (active)
-  - OpenAI-compatible (ready)
+  - OpenAI-compatible
 - Reliability layer:
-  - retries for external calls
-  - request timeouts
-  - JSON validation & parsing
-  - fallback responses
+  - retries & timeouts for external calls
+  - JSON parsing & validation
+  - fallback responses for invalid LLM output
 
 ---
 
@@ -39,9 +38,10 @@ The goal of this project is to demonstrate:
 
 The system follows a clean layered design:
 
-- HTTP layer (handlers)
-- service layer (business logic)
-- LLM abstraction layer (provider interface)
+- HTTP layer (request handling)
+- Application layer (use cases / command handlers)
+- Domain layer (business rules and validation)
+- Infrastructure layer (LLM, external integrations)
 
 LLM is treated as an unreliable external dependency and fully decoupled from business logic.
 
@@ -63,8 +63,14 @@ LLM is treated as an unreliable external dependency and fully decoupled from bus
 ```json
 {
   "issues": [
-    "Poor endurance during long rallies",
-    "Loss of focus under pressure"
+    {
+      "text": "Poor endurance during long rallies",
+      "severity": "high" 
+    },
+    {
+      "text": "Loss of focus under pressure",
+      "severity": "medium"
+    }
   ],
   "recommendations": [
     "Endurance-focused rally drills",
@@ -81,7 +87,6 @@ LLM is treated as an unreliable external dependency and fully decoupled from bus
 - Go
 - REST API (net/http)
 - LLM APIs (Groq / OpenAI-compatible)
-- Llama models via Groq
 
 ---
 
@@ -89,9 +94,10 @@ LLM is treated as an unreliable external dependency and fully decoupled from bus
 
 The system uses a provider-agnostic interface:
 
-- Easy to swap LLM providers via configuration
-- Supports mock mode for local development
-- Designed to avoid coupling business logic with external APIs
+- Provider-agnostic interface (Groq / OpenAI / Mock)
+- Runtime provider switching via configuration
+- Prompt builder separated from business logic
+- Response mapping isolated in infrastructure layer
 
 ---
 
@@ -105,7 +111,8 @@ The system uses a provider-agnostic interface:
 ---
 
 ## 📈 Status
-MVP — functional, tested, and ready for extension.
+MVP — production-oriented foundation, ready for extension
+(e.g. async processing, prompt versioning, observability)
 
 ---
 
