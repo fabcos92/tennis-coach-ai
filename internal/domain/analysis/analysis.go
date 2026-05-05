@@ -1,9 +1,9 @@
 package analysis
 
 type Analysis struct {
-	FocusArea       string
-	Issues          []Issue
-	Recommendations []string
+	FocusArea       string   `json:"focus_area"`
+	Issues          []Issue  `json:"issues"`
+	Recommendations []string `json:"recommendations"`
 }
 
 func NewDefaultAnalysis() *Analysis {

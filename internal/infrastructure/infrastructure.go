@@ -17,10 +17,17 @@ func New(cfg *config.Config) *Infrastructure {
 	groq := llm.NewGroq(cfg)
 	mock := llm.NewMock()
 
-	router := llm.NewRouter(llm.Provider(cfg.LLM.Provider), openai, groq, mock)
+	gateway := llm.NewGateway(
+		llm.DefaultPolicy(),
+		[]llm.ProviderClient{
+			{Name: "groq", LLM: groq},
+			{Name: "openai", LLM: openai},
+			{Name: "mock", LLM: mock},
+		},
+	)
 
 	return &Infrastructure{
-		LLM:           router,
+		LLM:           gateway,
 		Mapper:        llm.NewJSONMapper(),
 		PromptBuilder: llm.NewDefaultPromptBuilder(),
 	}

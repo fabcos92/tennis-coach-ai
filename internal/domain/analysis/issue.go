@@ -1,6 +1,6 @@
 package analysis
 
 type Issue struct {
-	Text     string
-	Severity Severity
+	Text     string   `json:"text"`
+	Severity Severity `json:"severity"`
 }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	config "tennis-coach-ai/cfg"
 	"tennis-coach-ai/internal/application/ports"
@@ -13,10 +12,9 @@ import (
 )
 
 type Groq struct {
-	apiKey       string
-	httpClient   *http.Client
-	baseURL      string
-	providerName string
+	apiKey     string
+	httpClient *http.Client
+	baseURL    string
 }
 
 func NewGroq(cfg *config.Config) ports.LLM {
@@ -26,23 +24,10 @@ func NewGroq(cfg *config.Config) ports.LLM {
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
-		providerName: "groq",
 	}
 }
 
 func (c *Groq) Analyze(ctx context.Context, prompt string) (string, error) {
-	return shared.WithRetry(func() (string, error) {
-		return c.callLLM(ctx, prompt)
-	})
-}
-
-func (c *Groq) callLLM(ctx context.Context, prompt string) (string, error) {
-	log.Printf("[LLM] calling provider (model=%s)", "llama-3.1-8b-instant")
-	start := time.Now()
-	defer func() {
-		log.Printf("[LLM] request finished in %s", time.Since(start))
-	}()
-
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -63,9 +48,8 @@ func (c *Groq) callLLM(ctx context.Context, prompt string) (string, error) {
 
 	bodyBytes, err := json.Marshal(reqBody)
 	if err != nil {
-		log.Printf("[LLM] request failed: %v", err)
 		return "", shared.LLMError{
-			Provider:  c.providerName,
+			Provider:  c.name(),
 			Message:   string(err.Error()),
 			Retryable: false,
 		}
@@ -78,9 +62,8 @@ func (c *Groq) callLLM(ctx context.Context, prompt string) (string, error) {
 		bytes.NewBuffer(bodyBytes),
 	)
 	if err != nil {
-		log.Printf("[LLM] request failed: %v", err)
 		return "", shared.LLMError{
-			Provider:  c.providerName,
+			Provider:  c.name(),
 			Message:   string(err.Error()),
 			Retryable: false,
 		}
@@ -89,11 +72,14 @@ func (c *Groq) callLLM(ctx context.Context, prompt string) (string, error) {
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := shared.DoRequest(ctx, c.httpClient, req, c.providerName)
+	resp, err := shared.DoRequest(ctx, c.httpClient, req, c.name())
 	if err != nil {
-		log.Printf("[LLM] request failed: %v", err)
 		return "", err
 	}
-	log.Printf("[LLM] response received successfully")
+
 	return resp.Choices[0].Message.Content, nil
+}
+
+func (c *Groq) name() string {
+	return "Groq"
 }

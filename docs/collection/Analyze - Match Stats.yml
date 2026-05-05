@@ -12,8 +12,8 @@ http:
       {
         "type": "match_stats",
         "stats": {
-          "first_serve_pct": 58,
-          "second_serve_won_pct": 32,
+          "first_serve_in_pct": 58,
+          "second_serve_in_pct": 32,
           "unforced_errors": 25
         }
       }

@@ -13,7 +13,7 @@ func NewMock() ports.LLM {
 
 func (m *Mock) Analyze(ctx context.Context, prompt string) (string, error) {
 	return `{
-		"issues": ["Weak second serve"],
+		"issues": [{"text": "Weak second serve", "severity": "medium"}],
 		"recommendations": ["Practice second serve consistency"],
 		"focus_area": "serve"
 	}`, nil

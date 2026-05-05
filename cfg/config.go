@@ -25,10 +25,6 @@ type Config struct {
 	Groq struct {
 		Key string `mapstructure:"key"`
 	} `mapstructure:"groq"`
-
-	LLM struct {
-		Provider string `mapstructure:"provider"`
-	} `mapstructure:"llm"`
 }
 
 func Load(cfgFile string) *Config {

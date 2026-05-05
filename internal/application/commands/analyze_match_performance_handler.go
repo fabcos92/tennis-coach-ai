@@ -32,16 +32,16 @@ func (h *AnalyzeMatchPerformanceHandler) Execute(ctx context.Context, command An
 
 	raw, err := h.llm.Analyze(ctx, prompt)
 	if err != nil {
-		return model.NewDefaultAnalysis(), err
+		return nil, err
 	}
 
 	analysis, err := h.mapper.FromLLM(raw)
 	if err != nil {
-		return model.NewDefaultAnalysis(), err
+		return nil, err
 	}
 
 	if err := analysis.Validate(); err != nil {
-		return model.NewDefaultAnalysis(), err
+		return nil, err
 	}
 
 	return analysis, nil

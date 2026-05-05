@@ -15,6 +15,7 @@ type AnalyzeMatchPerformance struct {
 func NewAnalyzeMatchPerformance(analysisType, text string, firstServeInPct, secondServeInPct, unforcedErrors int) AnalyzeMatchPerformance {
 	command := AnalyzeMatchPerformance{}
 	command.Type = analysisType
+	command.TextInput.Text = text
 	command.StatsInput.FirstServeInPct = firstServeInPct
 	command.StatsInput.SecondServeInPct = secondServeInPct
 	command.StatsInput.UnforcedErrors = unforcedErrors
