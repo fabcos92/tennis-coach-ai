@@ -31,10 +31,21 @@ func (g *Gateway) Analyze(ctx context.Context, prompt string) (string, error) {
 	var lastErr error
 
 	for _, provider := range g.providers {
+		if provider.Breaker != nil && !provider.Breaker.Allow() {
+			log.Printf("[LLM] provider=%s skipped (circuit open)", provider.Name)
+			continue
+		}
 
 		resp, err := g.callWithRetry(ctx, provider, prompt)
 		if err == nil {
+			if provider.Breaker != nil {
+				provider.Breaker.Success()
+			}
 			return resp, nil
+		}
+
+		if provider.Breaker != nil {
+			provider.Breaker.Fail()
 		}
 
 		lastErr = err
