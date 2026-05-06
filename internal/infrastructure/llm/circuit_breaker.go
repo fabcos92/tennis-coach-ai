@@ -33,14 +33,17 @@ func NewCircuitBreaker(maxFailures int, timeout time.Duration) *CircuitBreaker {
 	}
 }
 
-func (cb *CircuitBreaker) nextState() {
+func (cb *CircuitBreaker) updateState() {
 	if cb.state == StateOpen && time.Since(cb.openedAt) > cb.timeout {
 		cb.state = StateHalfOpen
 	}
 }
 
 func (cb *CircuitBreaker) Allow() bool {
-	cb.nextState()
+	cb.mu.Lock()
+	defer cb.mu.Unlock()
+
+	cb.updateState()
 
 	switch cb.state {
 	case StateOpen:

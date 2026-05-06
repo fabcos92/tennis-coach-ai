@@ -4,6 +4,7 @@ import (
 	config "tennis-coach-ai/cfg"
 	"tennis-coach-ai/internal/application/ports"
 	"tennis-coach-ai/internal/infrastructure/llm"
+	"tennis-coach-ai/internal/infrastructure/logging"
 	"time"
 )
 
@@ -14,6 +15,7 @@ type Infrastructure struct {
 }
 
 func New(cfg *config.Config) *Infrastructure {
+	logger := logging.NewStdLogger()
 	openai := llm.NewOpenAI(cfg)
 	groq := llm.NewGroq(cfg)
 	mock := llm.NewMock()
@@ -21,8 +23,16 @@ func New(cfg *config.Config) *Infrastructure {
 	gateway := llm.NewGateway(
 		llm.DefaultPolicy(),
 		[]llm.ProviderClient{
-			{Name: "groq", LLM: groq, Breaker: llm.NewCircuitBreaker(3, 10*time.Second)},
-			{Name: "openai", LLM: openai, Breaker: llm.NewCircuitBreaker(3, 10*time.Second)},
+			{
+				Name:    "groq",
+				LLM:     llm.NewLoggingLLM(groq, "groq", logger),
+				Breaker: llm.NewCircuitBreaker(3, 30*time.Second),
+			},
+			{
+				Name:    "openai",
+				LLM:     llm.NewLoggingLLM(openai, "openai", logger),
+				Breaker: llm.NewCircuitBreaker(3, 30*time.Second),
+			},
 			{Name: "mock", LLM: mock},
 		},
 	)
