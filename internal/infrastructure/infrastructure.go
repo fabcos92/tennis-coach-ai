@@ -9,9 +9,9 @@ import (
 )
 
 type Infrastructure struct {
-	LLM           ports.LLM
-	Mapper        ports.AnalysisMapper
-	PromptBuilder ports.PromptBuilder
+	LLM            ports.LLM
+	AnalysisMapper ports.AnalysisMapper
+	PromptBuilder  ports.PromptBuilder
 }
 
 func New(cfg *config.Config) *Infrastructure {
@@ -38,8 +38,8 @@ func New(cfg *config.Config) *Infrastructure {
 	)
 
 	return &Infrastructure{
-		LLM:           gateway,
-		Mapper:        llm.NewJSONMapper(),
-		PromptBuilder: llm.NewDefaultPromptBuilder(),
+		LLM:            gateway,
+		AnalysisMapper: llm.NewJSONMapper(),
+		PromptBuilder:  llm.NewDefaultPromptBuilder(),
 	}
 }

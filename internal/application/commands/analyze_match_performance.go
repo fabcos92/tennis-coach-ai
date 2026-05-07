@@ -1,18 +1,58 @@
 package commands
 
-import "tennis-coach-ai/internal/domain/input"
+type StatsPayload struct {
+	FirstServeInPct  float64
+	SecondServeInPct float64
 
-type AnalyzeMatchPerformance struct {
-	Type       *input.InputType
-	StatsInput *input.Stats
-	TextInput  *input.Text
+	FirstServeWonPct  float64
+	SecondServeWonPct float64
+
+	ReturnInPct  float64
+	ReturnWonPct float64
+
+	Aces         int
+	DoubleFaults int
+
+	Winners        int
+	UnforcedErrors int
+
+	Surface    string
+	MatchLevel string
 }
 
-func NewAnalyzeMatchPerformance(inputType *input.InputType, statsInput *input.Stats, textInput *input.Text) AnalyzeMatchPerformance {
+func NewStatsPayload(
+	firstServeInPct, firstServeWonPct, secondServeInPct, secondServeWonPct, returnInPct, returnWonPct float64,
+	aces, doubleFaults, winners, unforcedErrors int,
+	surface, matchLevel string,
+) *StatsPayload {
+	return &StatsPayload{
+		FirstServeInPct:   firstServeInPct,
+		SecondServeInPct:  firstServeWonPct,
+		FirstServeWonPct:  secondServeInPct,
+		SecondServeWonPct: secondServeWonPct,
+		ReturnInPct:       returnInPct,
+		ReturnWonPct:      returnWonPct,
+		Aces:              aces,
+		DoubleFaults:      doubleFaults,
+		Winners:           winners,
+		UnforcedErrors:    unforcedErrors,
+		Surface:           surface,
+		MatchLevel:        matchLevel,
+	}
+}
+
+type AnalyzeMatchPerformance struct {
+	Type string
+
+	Stats *StatsPayload
+	Text  string
+}
+
+func NewAnalyzeMatchPerformance(inputType string, statsInput *StatsPayload, textInput string) AnalyzeMatchPerformance {
 	command := AnalyzeMatchPerformance{
-		Type:       inputType,
-		StatsInput: statsInput,
-		TextInput:  textInput,
+		Type:  inputType,
+		Stats: statsInput,
+		Text:  textInput,
 	}
 
 	return command

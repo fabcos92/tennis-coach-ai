@@ -14,7 +14,11 @@ type Application struct {
 func NewApplication(infra *infrastructure.Infrastructure) *Application {
 	application := &Application{}
 
-	application.Commands.AnalyzeMatchPerformance = commands.NewAnalyzeMatchPerformanceHandler(infra.LLM, infra.Mapper, infra.PromptBuilder)
+	application.Commands.AnalyzeMatchPerformance = commands.NewAnalyzeMatchPerformanceHandler(
+		infra.LLM,
+		infra.AnalysisMapper,
+		infra.PromptBuilder,
+	)
 
 	return application
 }

@@ -8,7 +8,6 @@ import (
 	config "tennis-coach-ai/cfg"
 	"tennis-coach-ai/internal/application"
 	"tennis-coach-ai/internal/infrastructure/http/handlers"
-	"tennis-coach-ai/internal/infrastructure/http/mappers"
 	"tennis-coach-ai/internal/infrastructure/http/middlewares"
 	"time"
 
@@ -31,11 +30,10 @@ func NewServer(cfg *config.Config, app *application.Application) *Server {
 		middlewares.CORSMiddleware([]string{"http://localhost:5173"}),
 	)
 
-	healhHandler := handlers.NewHealthHandler()
-	registerHealthRoutes(r, healhHandler)
+	healthHandler := handlers.NewHealthHandler()
+	registerHealthRoutes(r, healthHandler)
 
-	matchInputMapper := mappers.NewDefaultMatchInputMapper()
-	analyzeHandler := handlers.NewAnalyzeHandler(app, matchInputMapper)
+	analyzeHandler := handlers.NewAnalyzeHandler(app)
 	register(r, analyzeHandler)
 
 	s.HTTP = &http.Server{
