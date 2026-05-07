@@ -1,24 +1,8 @@
 package ports
 
-type StatsInput struct {
-	FirstServeInPct  int
-	SecondServeInPct int
-	UnforcedErrors   int
-}
-
-func NewStatsInput(firstServeInPct, secondServeInPct, unforcedErrors int) StatsInput {
-	return StatsInput{firstServeInPct, secondServeInPct, unforcedErrors}
-}
-
-type TextInput struct {
-	Text string
-}
-
-func NewTextInput(text string) TextInput {
-	return TextInput{text}
-}
+import "tennis-coach-ai/internal/domain/input"
 
 type PromptBuilder interface {
-	BuildStats(input StatsInput) string
-	BuildText(input TextInput) string
+	BuildStats(i *input.Stats) string
+	BuildText(i *input.Text) string
 }

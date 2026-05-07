@@ -3,6 +3,7 @@ package llm
 import (
 	"fmt"
 	"tennis-coach-ai/internal/application/ports"
+	"tennis-coach-ai/internal/domain/input"
 )
 
 type DefaultPromptBuilder struct{}
@@ -11,7 +12,7 @@ func NewDefaultPromptBuilder() ports.PromptBuilder {
 	return &DefaultPromptBuilder{}
 }
 
-func (b *DefaultPromptBuilder) BuildStats(input ports.StatsInput) string {
+func (b *DefaultPromptBuilder) BuildStats(i *input.Stats) string {
 	return fmt.Sprintf(`You are an expert tennis coach.
 
 You MUST base all conclusions strictly on provided numerical data.
@@ -54,13 +55,13 @@ First serve in (percent): %d
 Second serve in (percent): %d
 Unforced errors (in total): %d
 `,
-		input.FirstServeInPct,
-		input.SecondServeInPct,
-		input.UnforcedErrors,
+		i.FirstServe.In,
+		i.SecondServe.In,
+		i.UnforcedErrors,
 	)
 }
 
-func (b *DefaultPromptBuilder) BuildText(input ports.TextInput) string {
+func (b *DefaultPromptBuilder) BuildText(i *input.Text) string {
 	return fmt.Sprintf(`You are an expert tennis coach.
 
 You analyze a textual description of a match.
@@ -99,6 +100,6 @@ Issues must describe concrete weaknesses, not just symptoms.
 Each field must be filled.
 Input: %s
 `,
-		input.Text,
+		i.Text,
 	)
 }

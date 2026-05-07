@@ -1,24 +1,19 @@
 package commands
 
+import "tennis-coach-ai/internal/domain/input"
+
 type AnalyzeMatchPerformance struct {
-	Type       string
-	StatsInput struct {
-		FirstServeInPct  int
-		SecondServeInPct int
-		UnforcedErrors   int
-	}
-	TextInput struct {
-		Text string
-	}
+	Type       *input.InputType
+	StatsInput *input.Stats
+	TextInput  *input.Text
 }
 
-func NewAnalyzeMatchPerformance(analysisType, text string, firstServeInPct, secondServeInPct, unforcedErrors int) AnalyzeMatchPerformance {
-	command := AnalyzeMatchPerformance{}
-	command.Type = analysisType
-	command.TextInput.Text = text
-	command.StatsInput.FirstServeInPct = firstServeInPct
-	command.StatsInput.SecondServeInPct = secondServeInPct
-	command.StatsInput.UnforcedErrors = unforcedErrors
+func NewAnalyzeMatchPerformance(inputType *input.InputType, statsInput *input.Stats, textInput *input.Text) AnalyzeMatchPerformance {
+	command := AnalyzeMatchPerformance{
+		Type:       inputType,
+		StatsInput: statsInput,
+		TextInput:  textInput,
+	}
 
 	return command
 }

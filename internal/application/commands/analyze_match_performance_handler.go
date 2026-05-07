@@ -22,12 +22,11 @@ func NewAnalyzeMatchPerformanceHandler(
 
 func (h *AnalyzeMatchPerformanceHandler) Execute(ctx context.Context, command AnalyzeMatchPerformance) (*model.Analysis, error) {
 	var prompt string
-	if command.Type == "text" {
-		input := ports.NewTextInput(command.TextInput.Text)
-		prompt = h.promptBuilder.BuildText(input)
-	} else {
-		input := ports.NewStatsInput(command.StatsInput.FirstServeInPct, command.StatsInput.SecondServeInPct, command.StatsInput.UnforcedErrors)
-		prompt = h.promptBuilder.BuildStats(input)
+	if command.Type.IsText() {
+		prompt = h.promptBuilder.BuildText(command.TextInput)
+	}
+	if command.Type.IsStats() {
+		prompt = h.promptBuilder.BuildStats(command.StatsInput)
 	}
 
 	raw, err := h.llm.Analyze(ctx, prompt)

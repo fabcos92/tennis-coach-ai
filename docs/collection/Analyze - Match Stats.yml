@@ -10,11 +10,13 @@ http:
     type: json
     data: |-
       {
-        "type": "match_stats",
+        "type": "stats",
         "stats": {
           "first_serve_in_pct": 58,
           "second_serve_in_pct": 32,
-          "unforced_errors": 25
+          "unforced_errors": 25,
+          "surface": "clay",
+          "match_level": "mid"
         }
       }
   auth: inherit

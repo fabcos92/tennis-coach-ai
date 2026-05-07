@@ -8,6 +8,7 @@ import (
 	config "tennis-coach-ai/cfg"
 	"tennis-coach-ai/internal/application"
 	"tennis-coach-ai/internal/infrastructure/http/handlers"
+	"tennis-coach-ai/internal/infrastructure/http/mappers"
 	"tennis-coach-ai/internal/infrastructure/http/middlewares"
 	"time"
 
@@ -33,7 +34,8 @@ func NewServer(cfg *config.Config, app *application.Application) *Server {
 	healhHandler := handlers.NewHealthHandler()
 	registerHealthRoutes(r, healhHandler)
 
-	analyzeHandler := handlers.NewAnalyzeHandler(app)
+	matchInputMapper := mappers.NewDefaultMatchInputMapper()
+	analyzeHandler := handlers.NewAnalyzeHandler(app, matchInputMapper)
 	register(r, analyzeHandler)
 
 	s.HTTP = &http.Server{
