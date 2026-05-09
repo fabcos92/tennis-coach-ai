@@ -3,6 +3,7 @@ package llm
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 	"tennis-coach-ai/internal/application/ports"
 	"tennis-coach-ai/internal/domain/analysis"
 )
@@ -16,7 +17,9 @@ func NewJSONMapper() ports.AnalysisMapper {
 func (m *JSONMapper) FromLLM(raw string) (*analysis.Analysis, error) {
 	var a analysis.Analysis
 
-	if err := json.Unmarshal([]byte(raw), &a); err != nil {
+	clean := sanitizeJSON(raw)
+
+	if err := json.Unmarshal([]byte(clean), &a); err != nil {
 		return nil, err
 	}
 
@@ -25,4 +28,17 @@ func (m *JSONMapper) FromLLM(raw string) (*analysis.Analysis, error) {
 	}
 
 	return &a, nil
+}
+
+func sanitizeJSON(raw string) string {
+	raw = strings.TrimSpace(raw)
+	raw = strings.Trim(raw, "`")
+	start := strings.Index(raw, "{")
+	end := strings.LastIndex(raw, "}")
+
+	if start == -1 || end == -1 || start > end {
+		return raw
+	}
+
+	return raw[start : end+1]
 }
