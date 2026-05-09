@@ -47,7 +47,7 @@ func (h *AnalyzeHandler) Analyze(w http.ResponseWriter, r *http.Request) {
 	for _, issue := range resp.Issues {
 		issues = append(issues, dto.NewIssue(issue.Text, issue.Severity.String()))
 	}
-	output := dto.NewAnalyzeResponse(issues, resp.Recommendations, resp.FocusArea)
+	output := dto.NewAnalyzeResponse(issues, resp.Recommendations, resp.FocusArea.String())
 
 	log.Printf("[ANALYZE] request completed successfully")
 	shared.WriteJSON(w, http.StatusOK, output)
